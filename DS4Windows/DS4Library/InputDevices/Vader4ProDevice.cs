@@ -194,7 +194,7 @@ namespace DS4Windows.InputDevices
                     cState.LY = report.LS_Y;
                     cState.RX = report.RS_X;
                     cState.RY = report.RS_Y;
-                    
+
                     // Adding paddles and c,z buttons
                     cState.SideL = report.IsM4Pressed;
                     cState.SideR = report.IsM3Pressed;
@@ -212,27 +212,9 @@ namespace DS4Windows.InputDevices
                     short ay = (short)(report.AccelYCalibrated);
                     short az = (short)(report.AccelZCalibrated);
 
-                    gyro[0] = (byte)(pitch & 0xFF);
-                    gyro[1] = (byte)((pitch >> 8) & 0xFF);
-                    gyro[2] = (byte)(yaw & 0xFF);
-                    gyro[3] = (byte)((yaw >> 8) & 0xFF);
-                    gyro[4] = (byte)(roll & 0xFF);
-                    gyro[5] = (byte)((roll >> 8) & 0xFF);
-
-                    // ---- Accel [X, Y, Z] ----
-                    accel[0] = (byte)(ax & 0xFF);
-                    accel[1] = (byte)((ax >> 8) & 0xFF);
-                    accel[2] = (byte)(ay & 0xFF);
-                    accel[3] = (byte)((ay >> 8) & 0xFF);
-                    accel[4] = (byte)(az & 0xFF);
-                    accel[5] = (byte)((az >> 8) & 0xFF);
-
                     if (synced)
                     {
-                        fixed (byte* pbGyro = gyro, pbAccel = accel)
-                        {
-                            sixAxis.handleSixaxis(pbGyro, pbAccel, cState, elapsedDeltaTime);
-                        }
+                        sixAxis.handleSixaxisVals(yaw, pitch, roll, ax, ay, az, cState, elapsedDeltaTime);
                     }
 
                     battery = 99;
