@@ -208,7 +208,7 @@ namespace DS4Windows.InputDevices
                     short pitch = (short)-report.PitchCalibrated;
                     short roll = (short)(report.RollCalibrated);
 
-                    short ax = (short)(report.AccelXCalibrated);
+                    short ax = (short)-(report.AccelXCalibrated);
                     short ay = (short)(report.AccelYCalibrated);
                     short az = (short)(report.AccelZCalibrated);
 
@@ -217,8 +217,7 @@ namespace DS4Windows.InputDevices
                         sixAxis.handleSixaxisVals(yaw, pitch, roll, ax, ay, az, cState, elapsedDeltaTime);
                     }
 
-                    battery = 99;
-                    cState.Battery = 99;
+                    cState.Battery = 100;
 
 
                     if (timeStampInit == false)
@@ -256,19 +255,16 @@ namespace DS4Windows.InputDevices
                     timeStampPrevious = tempStamp;
 
 
-                    if (conType == ConnectionType.USB)
+                    if (idleTimeout == 0)
                     {
-                        if (idleTimeout == 0)
+                        lastActive = utcNow;
+                    }
+                    else
+                    {
+                        idleInput = isDS4Idle();
+                        if (!idleInput)
                         {
                             lastActive = utcNow;
-                        }
-                        else
-                        {
-                            idleInput = isDS4Idle();
-                            if (!idleInput)
-                            {
-                                lastActive = utcNow;
-                            }
                         }
                     }
 
