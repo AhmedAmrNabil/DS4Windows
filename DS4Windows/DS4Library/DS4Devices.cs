@@ -16,13 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using DS4Windows.InputDevices;
+using NLog.Targets;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using DS4Windows.InputDevices;
 
 namespace DS4Windows
 {
@@ -240,6 +241,7 @@ namespace DS4Windows
             lock (Devices)
             {
                 IEnumerable<HidDevice> hDevices = HidDevices.EnumerateDS4(knownDevices);
+
                 hDevices = hDevices.Where(d =>
                 {
                     VidPidInfo metainfo = knownDevices.Single(x => x.vid == d.Attributes.VendorId &&
@@ -248,8 +250,20 @@ namespace DS4Windows
                 });
 
                 hDevices = hDevices.Where(IsRealDS4).Select(dev => dev);
+                hDevices = hDevices.Where(d =>
+                {
+                    int vid = d.Attributes.VendorId;
+                    int pid = d.Attributes.ProductId;
 
-                    //hDevices = from dev in hDevices where IsRealDS4(dev) select dev;
+                    if (vid == FLYDIGI_VID && pid == VADER4PRO_PID)
+                    {
+                        return d.DevicePath.Contains("&mi_02");
+                    }
+
+                    return true; // keep everything else
+                });
+
+                //hDevices = from dev in hDevices where IsRealDS4(dev) select dev;
                 // Sort Bluetooth first in case USB is also connected on the same controller.
                 hDevices = hDevices.OrderBy<HidDevice, ConnectionType>((HidDevice d) =>
                 {
@@ -313,7 +327,7 @@ namespace DS4Windows
                             }
                             catch (Exception) { }
                         }
-                        
+
                         // TODO in exclusive mode, try to hold both open when both are connected
                         if (isExclusiveMode && !hDevice.IsOpen)
                             hDevice.OpenDevice(false);
@@ -395,7 +409,7 @@ namespace DS4Windows
                                 DevicePaths.Add(hDevice.DevicePath);
                                 deviceSerials.Add(serial);
                                 serialDevices.Add(serial, ds4Device);
-                                AppLogger.LogToGui($"{DS4WinWPF.Properties.Resources.FoundController} {ds4Device.getMacAddress()} ({ds4Device.getConnectionType()}) ({ds4Device.DisplayName}).",false);
+                                AppLogger.LogToGui($"{DS4WinWPF.Properties.Resources.FoundController} {ds4Device.getMacAddress()} ({ds4Device.getConnectionType()}) ({ds4Device.DisplayName}).", false);
                             }
                         }
                     }
