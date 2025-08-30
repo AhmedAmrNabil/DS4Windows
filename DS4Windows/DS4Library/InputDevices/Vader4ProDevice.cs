@@ -196,12 +196,12 @@ namespace DS4Windows.InputDevices
                     cState.RY = report.RS_Y;
                     
                     // Adding paddles and c,z buttons
-                    cState.FnL = report.IsM2Pressed;
-                    cState.FnR = report.IsM1Pressed;
-                    cState.BLP = report.IsM4Pressed;
-                    cState.BRP = report.IsM3Pressed;
-                    cState.SideL = report.IsCPressed;
-                    cState.SideR = report.IsZPressed;
+                    cState.SideL = report.IsM4Pressed;
+                    cState.SideR = report.IsM3Pressed;
+                    cState.BLP = report.IsM2Pressed;
+                    cState.BRP = report.IsM1Pressed;
+                    cState.FnL = report.IsCPressed;
+                    cState.FnR = report.IsZPressed;
                     cState.Capture = report.IsFNPressed;
 
                     short yaw = (short)-report.YawCalibrated;
