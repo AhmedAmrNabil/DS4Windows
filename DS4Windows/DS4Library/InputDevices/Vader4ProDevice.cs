@@ -162,62 +162,67 @@ namespace DS4Windows.InputDevices
                     byte[] buf = new byte[32];
                     int copyLen = Math.Min(inputReport.Length, 32); // safe length
                     Array.Copy(inputReport, buf, copyLen);         // copies only what exists
-                    var report = new Vader4ProReport(buf);
-
-                    cState.Share = report.IsSelectPressed;
-                    cState.L3 = report.IsLSPressed;
-                    cState.R3 = report.IsRSPressed;
-                    cState.Options = report.IsStartPressed;
-                    cState.DpadUp = report.IsDPadUpPressed;
-                    cState.DpadRight = report.IsDPadRightPressed;
-                    cState.DpadDown = report.IsDPadDownPressed;
-                    cState.DpadLeft = report.IsDPadLeftPressed;
-
-                    cState.L2 = report.LT;
-                    cState.R2 = report.RT;
-
-                    cState.L1 = report.IsLBPressed;
-                    cState.R1 = report.IsRBPressed;
-                    cState.Triangle = report.IsYPressed;
-                    cState.Circle = report.IsBPressed;
-                    cState.Cross = report.IsAPressed;
-                    cState.Square = report.IsXPressed;
-                    cState.PS = report.IsHOMEPressed;
-
-                    cState.L2Btn = cState.L2 > 0;
-                    cState.R2Btn = cState.R2 > 0;
-
-                    cState.L2Raw = cState.L2;
-                    cState.R2Raw = cState.R2;
-
-                    cState.LX = report.LS_X;
-                    cState.LY = report.LS_Y;
-                    cState.RX = report.RS_X;
-                    cState.RY = report.RS_Y;
-
-                    // Adding paddles and c,z buttons
-                    cState.SideL = report.IsM4Pressed;
-                    cState.SideR = report.IsM3Pressed;
-                    cState.BLP = report.IsM2Pressed;
-                    cState.BRP = report.IsM1Pressed;
-                    cState.FnL = report.IsCPressed;
-                    cState.FnR = report.IsZPressed;
-                    cState.Capture = report.IsFNPressed;
-
-                    short yaw = (short)-report.YawCalibrated;
-                    short pitch = (short)-report.PitchCalibrated;
-                    short roll = (short)(report.RollCalibrated);
-
-                    short ax = (short)-(report.AccelXCalibrated);
-                    short ay = (short)(report.AccelYCalibrated);
-                    short az = (short)(report.AccelZCalibrated);
-
-                    if (synced)
+                    if (buf[1] == 0xFE)
                     {
-                        sixAxis.handleSixaxisVals(yaw, pitch, roll, ax, ay, az, cState, elapsedDeltaTime);
+                        var report = new Vader4ProReport(buf);
+                        // Dpad
+                        cState.DpadUp = report.IsDPadUpPressed;
+                        cState.DpadRight = report.IsDPadRightPressed;
+                        cState.DpadDown = report.IsDPadDownPressed;
+                        cState.DpadLeft = report.IsDPadLeftPressed;
+                        // Left Stick
+                        cState.LX = report.LS_X;
+                        cState.LY = report.LS_Y;
+                        cState.L3 = report.IsLSPressed;
+                        // Right Stick
+                        cState.RX = report.RS_X;
+                        cState.RY = report.RS_Y;
+                        cState.R3 = report.IsRSPressed;
+                        // Share/Options
+                        cState.Share = report.IsSelectPressed;
+                        cState.Options = report.IsStartPressed;
+                        // Left Bumper / Right Bumper
+                        cState.L1 = report.IsLBPressed;
+                        cState.R1 = report.IsRBPressed;
+                        // Left Trigger
+                        cState.L2 = report.LT;
+                        cState.L2Btn = cState.L2 > 0;
+                        cState.L2Raw = cState.L2;
+                        // Right Trigger
+                        cState.R2 = report.RT;
+                        cState.R2Btn = cState.R2 > 0;
+                        cState.R2Raw = cState.R2;
+                        // Face Buttons
+                        cState.Cross = report.IsAPressed;
+                        cState.Circle = report.IsBPressed;
+                        cState.Square = report.IsXPressed;
+                        cState.Triangle = report.IsYPressed;
+                        // PlayStation Button
+                        cState.PS = report.IsHOMEPressed;
+                        // Paddles
+                        cState.SideL = report.IsM4Pressed;
+                        cState.SideR = report.IsM3Pressed;
+                        cState.BLP = report.IsM2Pressed;
+                        cState.BRP = report.IsM1Pressed;
+                        // C,Z buttons
+                        cState.FnL = report.IsCPressed;
+                        cState.FnR = report.IsZPressed;
+                        // FN button
+                        cState.Capture = report.IsFNPressed;
+                        // Gyro / Accelerometer
+                        short yaw = (short)-report.YawCalibrated;
+                        short pitch = (short)-report.PitchCalibrated;
+                        short roll = (short)(report.RollCalibrated);
+                        short ax = (short)-(report.AccelXCalibrated);
+                        short ay = (short)(report.AccelYCalibrated);
+                        short az = (short)(report.AccelZCalibrated);
+                        if (synced)
+                        {
+                            sixAxis.handleSixaxisVals(yaw, pitch, roll, ax, ay, az, cState, elapsedDeltaTime);
+                        }
                     }
 
-                    cState.Battery = 100;
+                    cState.Battery = 99;
 
 
                     if (timeStampInit == false)
