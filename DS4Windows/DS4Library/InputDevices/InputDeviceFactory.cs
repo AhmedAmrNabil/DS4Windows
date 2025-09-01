@@ -39,7 +39,7 @@ namespace DS4Windows.InputDevices
     public abstract class InputDeviceFactory
     {
         public static DS4Device CreateDevice(InputDeviceType tempType,
-            HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4)
+            HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4, string macAddress = "")
         {
             DS4Device temp = null;
 
@@ -63,7 +63,7 @@ namespace DS4Windows.InputDevices
                     temp = new DS3Device(hidDevice, disName, featureSet);
                     break;
                 case InputDeviceType.Vader4Pro:
-                    temp = new Vader4ProDevice(hidDevice, disName, featureSet);
+                    temp = new Vader4ProDevice(hidDevice, disName, featureSet, macAddress);
                     break;
             }
 

@@ -352,6 +352,10 @@ namespace DS4Windows
                             // Blank serial will mean that a JoyCon is not docked to a side
                             serial = JoyConDevice.ReadUSBSerial(hDevice);
                         }
+                        else if (metainfo.inputDevType == InputDeviceType.Vader4Pro)
+                        {
+                            serial = hDevice.GetVader4ProMacAddress();
+                        }
                         else
                         {
                             serial = hDevice.ReadSerial(DS4Device.SERIAL_FEATURE_ID);
@@ -390,7 +394,7 @@ namespace DS4Windows
 
                         if (newdev && validSerial)
                         {
-                            DS4Device ds4Device = InputDeviceFactory.CreateDevice(metainfo.inputDevType, hDevice, metainfo.name, metainfo.featureSet);
+                            DS4Device ds4Device = InputDeviceFactory.CreateDevice(metainfo.inputDevType, hDevice, metainfo.name, metainfo.featureSet, serial);
                             //DS4Device ds4Device = new DS4Device(hDevice, metainfo.name, metainfo.featureSet);
                             if (ds4Device == null)
                             {

@@ -17,15 +17,17 @@ namespace DS4Windows.InputDevices
         private uint deltaTimeCurrent = 0;
         private bool outputDirty = false;
         private DS4HapticState previousHapticState = new DS4HapticState();
-        private byte[] featureReport;
 
         private Vader4ProControllerOptions nativeOptionsStore;
         public Vader4ProControllerOptions NativeOptionsStore { get => nativeOptionsStore; }
-        public Vader4ProDevice(HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4) :
+        public Vader4ProDevice(HidDevice hidDevice, string disName, VidPidFeatureSet featureSet = VidPidFeatureSet.DefaultDS4, string macAddress = "") :
             base(hidDevice, disName, featureSet)
         {
             synced = true;
-
+            if (macAddress != "")
+            {
+                Mac = macAddress;
+            }
         }
 
         public override event ReportHandler<EventArgs> Report = null;
@@ -33,15 +35,15 @@ namespace DS4Windows.InputDevices
         public override event EventHandler ChargingChanged;
         public override void PostInit()
         {
-            Mac = hDevice.GenerateFakeHwSerial();
+            if (Mac == null || Mac == "" || Mac == BLANK_SERIAL) 
+            {
+                Mac = hDevice.GenerateFakeHwSerial();
+            }
             deviceType = InputDeviceType.Vader4Pro;
             gyroMouseSensSettings = new GyroMouseSens();
-            featureReport = new byte[hDevice.Capabilities.FeatureReportByteLength];
             inputReport = new byte[hDevice.Capabilities.InputReportByteLength];
-            outputReport = new byte[hDevice.Capabilities.OutputReportByteLength];
             warnInterval = WARN_INTERVAL_USB;
             conType = ConnectionType.USB;
-
         }
 
         public override bool DisconnectBT(bool callRemoval = false)
@@ -79,12 +81,12 @@ namespace DS4Windows.InputDevices
             {
                 ds4Input = new Thread(ReadInput);
                 ds4Input.Priority = ThreadPriority.AboveNormal;
-                ds4Input.Name = "DS3 Input thread: " + Mac;
+                ds4Input.Name = "Vader 4 Pro Input thread: " + Mac;
                 ds4Input.IsBackground = true;
                 ds4Input.Start();
             }
             else
-                Console.WriteLine("Thread already running for DS4: " + Mac);
+                Console.WriteLine("Thread already running for Vader 4 Pro: " + Mac);
         }
 
         private unsafe void ReadInput()
