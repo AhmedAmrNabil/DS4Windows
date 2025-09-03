@@ -44,6 +44,13 @@ namespace DS4Windows.InputDevices
             inputReport = new byte[hDevice.Capabilities.InputReportByteLength];
             warnInterval = WARN_INTERVAL_USB;
             conType = ConnectionType.USB;
+            byte[] buf = new byte[32];
+            buf[0] = 0x05;
+            buf[1] = 0x10;
+            buf[2] = 0x01;
+            buf[3] = 0x01;
+            buf[4] = 0x01;
+            hDevice.WriteOutputReportViaInterrupt(buf, READ_STREAM_TIMEOUT);
         }
 
         public override bool DisconnectBT(bool callRemoval = false)
