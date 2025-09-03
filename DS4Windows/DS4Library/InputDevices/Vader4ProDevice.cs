@@ -360,7 +360,6 @@ namespace DS4Windows.InputDevices
         }
         private void SetRumble(byte leftMain, byte rightMain, byte leftTrigger = 0, byte rightTrigger = 0)
         {
-            // WriteReport([0x05, 0x0f, leftMain, rightMain, leftTrigger, rightTrigger, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
             byte[] buf = new byte[32];
             buf[0] = 0x05;
             buf[1] = 0x0F;
@@ -373,7 +372,6 @@ namespace DS4Windows.InputDevices
 
         private void SetLed(byte r, byte g, byte b)
         {
-            //WriteReport([0x05, 0xe0, r, g, b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
             byte[] buf = new byte[32];
             buf[0] = 0x05;
             buf[1] = 0xE0;
@@ -392,6 +390,8 @@ namespace DS4Windows.InputDevices
             buf[3] = 0x01;
             buf[4] = 0x01;
             hDevice.WriteOutputReportViaInterrupt(buf, READ_STREAM_TIMEOUT);
+            SetLed(0, 0, 0);
+            setRumble(0, 0);
         }
 
     }
